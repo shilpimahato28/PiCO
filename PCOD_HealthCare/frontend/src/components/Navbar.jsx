@@ -1,0 +1,183 @@
+"use client";
+
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import WalletConnect from "./WalletConnect";
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isHealthOpen, setIsHealthOpen] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
+  const navigate = useNavigate();
+
+  const handleMouseEnter = () => {
+    clearTimeout(timeoutId);
+    setIsHealthOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    const id = setTimeout(() => setIsHealthOpen(false), 500);
+    setTimeoutId(id);
+  };
+
+  const handleClickInside = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setIsOpen(false); // close mobile menu
+  };
+
+  return (
+    <>
+      {/* Fixed Navbar */}
+      <div className="fixed top-0 left-0 w-full z-50 shadow-md">
+        <nav className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 text-white rounded-b-lg">
+          {/* Logo */}
+          <div
+            className="text-lg font-bold tracking-wide hover:scale-105 transition-transform cursor-pointer"
+            onClick={() => handleNavigation("/")}
+          >
+            PiCO
+          </div>
+
+          {/* Hamburger Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="lg:hidden focus:outline-none"
+          >
+            <div className="space-y-2">
+              <span className="block w-8 h-1 bg-white rounded"></span>
+              <span className="block w-8 h-1 bg-white rounded"></span>
+              <span className="block w-8 h-1 bg-white rounded"></span>
+            </div>
+          </button>
+
+          {/* Desktop Links */}
+          <div className="hidden lg:flex items-center space-x-8">
+            <div
+              className="relative"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div
+                className="font-bold text-lg cursor-pointer hover:text-pink-400 transition duration-300 transform hover:scale-110"
+              >
+                Health
+              </div>
+
+              {isHealthOpen && (
+                <div
+                  className="absolute top-full left-0 mt-2 bg-white text-purple-800 shadow-md rounded-lg p-4 w-96 grid grid-cols-2 gap-4"
+                  onClick={handleClickInside}
+                >
+                  {[
+                    { name: "PCOD/PCOS", path: "/pcod-pcos" },
+                    { name: "Pregnancy Care", path: "/pregnancy" },
+                    { name: "Menopause", path: "/menopause" },
+                    { name: "Mental Well-being", path: "/health/mental" },
+                    { name: "Nutrition & Diet", path: "/health/nutrition" },
+                    { name: "Fitness & Exercise", path: "/health/fitness" },
+                    { name: "Skin & Hair Care", path: "/hairandskincare" },
+                    { name: "Women's Hygiene", path: "/health/hygiene" },
+                  ].map(({ name, path }) => (
+                    <div
+                      key={name}
+                      className="px-4 py-2 bg-gray-100 hover:bg-purple-200 rounded text-center min-w-[180px] cursor-pointer"
+                      onClick={() => handleNavigation(path)}
+                    >
+                      {name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Other Desktop Links */}
+            {[
+              { name: "Community", path: "/community" },
+              { name: "Cycle Tracker", path: "/tracker" },
+              { name: "Dashboard", path: "/dashboard" },
+            ].map(({ name, path }) => (
+              <div
+                key={name}
+                className="font-bold text-lg cursor-pointer hover:text-pink-400 transition duration-300 transform hover:scale-110"
+                onClick={() => handleNavigation(path)}
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Wallet Button */}
+          <div className="hidden lg:flex">
+            <WalletConnect />
+          </div>
+        </nav>
+      </div>
+
+      {/* ******** MOBILE MENU ******** */}
+      {isOpen && (
+        <div className="lg:hidden bg-white text-purple-800 shadow-md px-6 py-4 space-y-4 mt-[80px] w-full fixed z-40">
+          {/* Health Dropdown (Mobile) */}
+          <div>
+            <div
+              className="font-bold text-lg cursor-pointer flex justify-between items-center"
+              onClick={() => setIsHealthOpen(!isHealthOpen)}
+            >
+              Health
+              <span>{isHealthOpen ? "▲" : "▼"}</span>
+            </div>
+
+            {isHealthOpen && (
+              <div className="mt-2 grid grid-cols-1 gap-3">
+                {[
+                  { name: "PCOD/PCOS", path: "/pcod-pcos" },
+                  { name: "Pregnancy Care", path: "/pregnancy" },
+                  { name: "Menopause", path: "/menopause" },
+                  { name: "Mental Well-being", path: "/health/mental" },
+                  { name: "Nutrition & Diet", path: "/health/nutrition" },
+                  { name: "Fitness & Exercise", path: "/health/fitness" },
+                  { name: "Skin & Hair Care", path: "/hairandskincare" },
+                  { name: "Women's Hygiene", path: "/health/hygiene" },
+                ].map(({ name, path }) => (
+                  <div
+                    key={name}
+                    className="px-4 py-2 bg-gray-100 hover:bg-purple-200 rounded cursor-pointer"
+                    onClick={() => handleNavigation(path)}
+                  >
+                    {name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Other Links (Mobile) */}
+          {[
+            { name: "Community", path: "/community" },
+            { name: "Cycle Tracker", path: "/tracker" },
+            { name: "Dashboard", path: "/dashboard" },
+          ].map(({ name, path }) => (
+            <div
+              key={name}
+              className="font-bold text-lg cursor-pointer"
+              onClick={() => handleNavigation(path)}
+            >
+              {name}
+            </div>
+          ))}
+
+          {/* Wallet Button Mobile */}
+          <div>
+            <WalletConnect />
+          </div>
+        </div>
+      )}
+
+      {/* Spacer for fixed navbar */}
+      <div className="h-[80px]" />
+    </>
+  );
+}
