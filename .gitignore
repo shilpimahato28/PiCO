@@ -1,0 +1,15 @@
+# Ignore PCOD_HealthCare unwanted subfolders
+PCOD_HealthCare/python-ml/
+PCOD_HealthCare/.vscode/
+
+# Node.js folders
+frontend/node_modules/
+backend/node_modules/
+
+# Environment files
+frontend/.env
+backend/.env
+
+# Other system files
+.DS_Store
+Thumbs.db
